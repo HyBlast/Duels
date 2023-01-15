@@ -65,6 +65,8 @@ public class Config extends AbstractConfiguration<DuelsPlugin> {
     @Getter
     private boolean requiresClearedInventory;
     @Getter
+    private boolean requiresNoElytra;
+    @Getter
     private boolean preventCreativeMode;
     @Getter
     private boolean ownInventoryEnabled;
@@ -84,6 +86,10 @@ public class Config extends AbstractConfiguration<DuelsPlugin> {
     private boolean itemBettingUsePermission;
     @Getter
     private boolean moneyBettingEnabled;
+    @Getter
+    private long moneyBettingMinAmount;
+    @Getter
+    private long moneyBettingMaxAmount;
     @Getter
     private boolean moneyBettingUsePermission;
     @Getter
@@ -283,6 +289,7 @@ public class Config extends AbstractConfiguration<DuelsPlugin> {
         lhLossesTitle = configuration.getString("supported-plugins.LeaderHeads.losses.menu.title", "Duel Losses");
 
         requiresClearedInventory = configuration.getBoolean("request.requires-cleared-inventory", true);
+        requiresNoElytra = configuration.getBoolean("request.requires-no-wearing-elytra", false);
         preventCreativeMode = configuration.getBoolean("request.prevent-creative-mode", false);
         ownInventoryEnabled = configuration.getBoolean("request.use-own-inventory.enabled", true);
         ownInventoryUsePermission = configuration.getBoolean("request.use-own-inventory.use-permission", false);
@@ -293,6 +300,8 @@ public class Config extends AbstractConfiguration<DuelsPlugin> {
         itemBettingEnabled = configuration.getBoolean("request.item-betting.enabled", true);
         itemBettingUsePermission = configuration.getBoolean("request.item-betting.use-permission", false);
         moneyBettingEnabled = configuration.getBoolean("request.money-betting.enabled", true);
+        moneyBettingMinAmount = configuration.getLong("request.money-betting.min-amount");
+        moneyBettingMaxAmount = configuration.getLong("request.money-betting.max-amount");
         moneyBettingUsePermission = configuration.getBoolean("request.money-betting.use-permission", false);
         expiration = Math.max(configuration.getInt("request.expiration", 30), 0);
 

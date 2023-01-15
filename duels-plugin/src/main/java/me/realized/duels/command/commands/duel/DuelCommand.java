@@ -24,9 +24,11 @@ import me.realized.duels.util.StringUtil;
 import me.realized.duels.util.inventory.InventoryUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.PlayerInventory;
 
 public class DuelCommand extends BaseCommand {
 
@@ -74,6 +76,11 @@ public class DuelCommand extends BaseCommand {
 
         if (config.isRequiresClearedInventory() && InventoryUtil.hasItem(player)) {
             lang.sendMessage(sender, "ERROR.duel.inventory-not-empty");
+            return true;
+        }
+
+        if (config.isRequiresNoElytra() && InventoryUtil.wearingElytra(player)) {
+            lang.sendMessage(sender, "ERROR.duel.wearing-elytra");
             return true;
         }
 
@@ -170,6 +177,11 @@ public class DuelCommand extends BaseCommand {
 
                 if (vault == null || vault.getEconomy() == null) {
                     lang.sendMessage(sender, "ERROR.setting.disabled-option", "option", lang.getMessage("GENERAL.betting"));
+                    return true;
+                }
+
+                if (amount < config.getMoneyBettingMinAmount() || amount > config.getMoneyBettingMaxAmount()) {
+                    lang.sendMessage(sender, "ERROR.command.insufficient-amount", "min", config.getMoneyBettingMinAmount(), "max", config.getMoneyBettingMaxAmount());
                     return true;
                 }
 
