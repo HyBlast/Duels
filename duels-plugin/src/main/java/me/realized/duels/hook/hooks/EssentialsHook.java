@@ -20,8 +20,9 @@ public class EssentialsHook extends PluginHook<DuelsPlugin> {
         this.config = plugin.getConfiguration();
     }
 
-    public boolean isVanished(@NotNull Player player) {
-        return getEssentials().getUser(player).isVanished();
+    @Override
+    public Essentials getPlugin() {
+        return (Essentials) super.getPlugin();
     }
 
     public void tryUnvanish(final Player player) {
@@ -29,7 +30,8 @@ public class EssentialsHook extends PluginHook<DuelsPlugin> {
             return;
         }
 
-        final User user = getEssentials().getUser(player);
+        final User user = getPlugin().getUser(player);
+
         if (user != null && user.isVanished()) {
             user.setVanished(false);
         }
@@ -40,13 +42,15 @@ public class EssentialsHook extends PluginHook<DuelsPlugin> {
             return;
         }
 
-        final User user = getEssentials().getUser(player);
+        final User user = getPlugin().getUser(player);
+
         if (user != null) {
             user.setLastLocation(location);
         }
     }
 
-    private Essentials getEssentials() {
-        return (Essentials) getPlugin();
+    public boolean isVanished(final Player player) {
+        final User user;
+        return (user = getPlugin().getUser(player)) != null && user.isVanished();
     }
 }

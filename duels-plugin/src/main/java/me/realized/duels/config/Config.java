@@ -71,6 +71,8 @@ public class Config extends AbstractConfiguration<DuelsPlugin> {
     @Getter
     private boolean ownInventoryEnabled;
     @Getter
+    private boolean ownInventoryDropInventoryItems;
+    @Getter
     private boolean ownInventoryUsePermission;
     @Getter
     private boolean kitSelectingEnabled;
@@ -292,6 +294,7 @@ public class Config extends AbstractConfiguration<DuelsPlugin> {
         requiresNoElytra = configuration.getBoolean("request.requires-no-wearing-elytra", false);
         preventCreativeMode = configuration.getBoolean("request.prevent-creative-mode", false);
         ownInventoryEnabled = configuration.getBoolean("request.use-own-inventory.enabled", true);
+        ownInventoryDropInventoryItems = configuration.getBoolean("request.use-own-inventory.drop-inventory-items", false);
         ownInventoryUsePermission = configuration.getBoolean("request.use-own-inventory.use-permission", false);
         kitSelectingEnabled = configuration.getBoolean("request.kit-selecting.enabled", true);
         kitSelectingUsePermission = configuration.getBoolean("request.kit-selecting.use-permission", false);

@@ -63,12 +63,14 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.FireworkMeta;
@@ -264,7 +266,10 @@ public class DuelManager implements Loadable {
 
         if (!player.isDead()) {
             playerManager.remove(player);
-            PlayerUtil.reset(player);
+
+            if (!(match.isOwnInventory() && config.isOwnInventoryDropInventoryItems())) {
+                PlayerUtil.reset(player);
+            }
 
             if (info != null) {
                 teleport.tryTeleport(player, info.getLocation());
@@ -274,7 +279,7 @@ public class DuelManager implements Loadable {
             if (InventoryUtil.addOrDrop(player, items)) {
                 lang.sendMessage(player, "DUEL.reward.items.message", "name", opponentName);
             }
-        } else {
+        } else if (info != null) {
             info.getExtra().addAll(items);
         }
     }
@@ -357,7 +362,7 @@ public class DuelManager implements Loadable {
         }
 
         final MatchImpl match = arena.startMatch(kit, items, settings.getBet(), source);
-        addPlayers(source, arena, kit, arena.getPositions(), first, second);
+        addPlayers(match, arena, kit, arena.getPositions(), first, second);
 
         if (config.isCdEnabled()) {
             final Map<UUID, Pair<String, Integer>> info = new HashMap<>();
@@ -406,11 +411,11 @@ public class DuelManager implements Loadable {
         return user != null ? user.getRating(kit) : config.getDefaultRating();
     }
 
-    private void addPlayers(final Queue source, final ArenaImpl arena, final KitImpl kit, final Map<Integer, Location> locations, final Player... players) {
+    private void addPlayers(final MatchImpl match, final ArenaImpl arena, final KitImpl kit, final Map<Integer, Location> locations, final Player... players) {
         int position = 0;
 
         for (final Player player : players) {
-            if (source == null) {
+            if (match.getSource() == null) {
                 queueManager.remove(player);
             }
 
@@ -420,7 +425,7 @@ public class DuelManager implements Loadable {
             }
 
             player.closeInventory();
-            playerManager.create(player);
+            playerManager.create(player, match.isOwnInventory() && config.isOwnInventoryDropInventoryItems());
             teleport.tryTeleport(player, locations.get(++position));
 
             if (kit != null) {
@@ -428,7 +433,7 @@ public class DuelManager implements Loadable {
                 kit.equip(player);
             }
 
-            if (config.isStartCommandsEnabled() && !(source == null && config.isStartCommandsQueueOnly())) {
+            if (config.isStartCommandsEnabled() && !(match.getSource() == null && config.isStartCommandsQueueOnly())) {
                 try {
                     for (final String command : config.getStartCommands()) {
                         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command.replace("%player%", player.getName()));
@@ -519,15 +524,6 @@ public class DuelManager implements Loadable {
 
     private class DuelListener implements Listener {
 
-        @EventHandler(priority = EventPriority.LOWEST)
-        public void onLowest(final PlayerDeathEvent event) {
-            if (!arenaManager.isInMatch(event.getEntity())) {
-                return;
-            }
-
-            event.getDrops().clear();
-        }
-
         @EventHandler(priority = EventPriority.HIGHEST)
         public void on(final PlayerDeathEvent event) {
             final Player player = event.getEntity();
@@ -541,17 +537,26 @@ public class DuelManager implements Loadable {
                 mcMMO.enableSkills(player);
             }
 
-            event.setKeepLevel(true);
-            event.setDroppedExp(0);
-            event.setKeepInventory(false);
-            inventoryManager.create(player, true);
-
             final MatchImpl match = arena.getMatch();
 
             if (match == null) {
                 return;
             }
 
+            final Inventory top = player.getOpenInventory().getTopInventory();
+
+            if (top.getType() == InventoryType.CRAFTING) {
+                top.clear();
+            }
+            
+            if (!(match.isOwnInventory() && config.isOwnInventoryDropInventoryItems())) {    
+                event.getDrops().clear();
+                event.setKeepLevel(true);
+                event.setDroppedExp(0);
+                event.setKeepInventory(false);
+            }
+            
+            inventoryManager.create(player, true);
             arena.remove(player);
 
             // Call end task only on the first death
@@ -579,6 +584,7 @@ public class DuelManager implements Loadable {
                 if (config.isSpawnFirework()) {
                     final Firework firework = (Firework) winner.getWorld().spawnEntity(winner.getEyeLocation(), EntityType.FIREWORK);
                     final FireworkMeta meta = firework.getFireworkMeta();
+                    meta.setPower(0);
                     meta.addEffect(FireworkEffect.builder().withColor(Color.RED).with(FireworkEffect.Type.BALL_LARGE).withTrail().build());
                     firework.setFireworkMeta(meta);
                 }
