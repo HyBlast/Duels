@@ -7,6 +7,7 @@ import me.realized.duels.config.Config;
 import me.realized.duels.util.hook.PluginHook;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 public class EssentialsHook extends PluginHook<DuelsPlugin> {
 

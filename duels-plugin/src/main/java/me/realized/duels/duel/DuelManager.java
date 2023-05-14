@@ -72,6 +72,7 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.FireworkMeta;
 
 public class DuelManager implements Loadable {
@@ -256,6 +257,10 @@ public class DuelManager implements Loadable {
             mcMMO.enableSkills(player);
         }
 
+        if (opponent != null) {
+            teleport.tryTeleport(opponent, playerManager.getLobby());
+        }
+
         final PlayerInfo info = playerManager.get(player);
         final List<ItemStack> items = match.getItems();
 
@@ -314,6 +319,12 @@ public class DuelManager implements Loadable {
 
         if (config.isDuelzoneEnabled() && worldGuard != null && (notInDz(first, settings.getDuelzone(first)) || notInDz(second, settings.getDuelzone(second)))) {
             lang.sendMessage(Arrays.asList(first, second), "DUEL.start-failure.not-in-duelzone");
+            refundItems(items, first, second);
+            return;
+        }
+
+        if (config.isRequiresNoElytra() && InventoryUtil.wearingElytra(first) || InventoryUtil.wearingElytra(second)) {
+            lang.sendMessage(Arrays.asList(first, second), "DUEL.start-failure.wearing-elytra");
             refundItems(items, first, second);
             return;
         }
@@ -566,6 +577,9 @@ public class DuelManager implements Loadable {
 
                 final Player winner = arena.first();
                 inventoryManager.create(winner, false);
+
+                PlayerUtil.reset(winner);
+                PlayerUtil.reset(player);
 
                 if (config.isSpawnFirework()) {
                     final Firework firework = (Firework) winner.getWorld().spawnEntity(winner.getEyeLocation(), EntityType.FIREWORK);
