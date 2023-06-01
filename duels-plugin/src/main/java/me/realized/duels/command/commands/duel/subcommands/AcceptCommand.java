@@ -106,7 +106,7 @@ public class AcceptCommand extends BaseCommand {
         final String arena = settings.getArena() != null ? settings.getArena().getName() : lang.getMessage("GENERAL.random");
         final double bet = settings.getBet();
         final String itemBetting = settings.isItemBetting() ? lang.getMessage("GENERAL.enabled") : lang.getMessage("GENERAL.disabled");
-        final String mcmmoSkills = settings.isSkillsEnabled() ? lang.getMessage("GENERAL.enabled") : lang.getMessage("GENERAL.disabled");
+        final String mcmmoSkills = settings.isMcmmoSkills() ? lang.getMessage("GENERAL.enabled") : lang.getMessage("GENERAL.disabled");
         lang.sendMessage(player, "COMMAND.duel.request.accept.receiver",
             "name", target.getName(), "kit", kit, "arena", arena, "bet_amount", bet, "item_betting", itemBetting, "mcmmo_skills", mcmmoSkills);
         lang.sendMessage(target, "COMMAND.duel.request.accept.sender",

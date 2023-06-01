@@ -16,7 +16,7 @@ public class McmmoSkillButton extends BaseButton {
     @Override
     public void update(final Player player) {
         final Settings settings = settingManager.getSafely(player);
-        final String mcmmoSkills = settings.isSkillsEnabled() ? lang.getMessage("GENERAL.enabled") : lang.getMessage("GENERAL.disabled");
+        final String mcmmoSkills = settings.isMcmmoSkills() ? lang.getMessage("GENERAL.enabled") : lang.getMessage("GENERAL.disabled");
         final String lore = plugin.getLang().getMessage("GUI.settings.buttons.mcmmo-skill.lore", "mcmmo_skills", mcmmoSkills);
         setLore(lore.split("\n"));
     }
@@ -24,7 +24,7 @@ public class McmmoSkillButton extends BaseButton {
     @Override
     public void onClick(final Player player) {
         final Settings settings = settingManager.getSafely(player);
-        settings.setSkillsEnabled(!settings.isSkillsEnabled());
+        settings.setMcmmoSkills(!settings.isMcmmoSkills());
         settings.updateGui(player);
     }
 }

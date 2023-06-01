@@ -34,7 +34,7 @@ public class Settings {
     private boolean ownInventory;
     @Getter
     @Setter
-    private boolean isSkillsEnabled;
+    private boolean mcmmoSkills;
     @Getter
     private Map<UUID, CachedInfo> cache = new HashMap<>();
 
@@ -55,7 +55,7 @@ public class Settings {
         arena = null;
         bet = 0;
         itemBetting = false;
-        isSkillsEnabled = true;
+        mcmmoSkills = true;
         ownInventory = !plugin.getConfiguration().isKitSelectingEnabled();
     }
 
@@ -127,7 +127,7 @@ public class Settings {
         copy.bet = bet;
         copy.itemBetting = itemBetting;
         copy.ownInventory = ownInventory;
-        copy.isSkillsEnabled = isSkillsEnabled;
+        copy.mcmmoSkills = mcmmoSkills;
         copy.cache = new HashMap<>(cache);
         return copy;
     }

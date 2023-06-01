@@ -200,7 +200,7 @@ public class DuelManager implements Loadable {
 
         if (mcMMO != null) {
             mcMMO.enableSkills(player);
-            if (!match.isSkillEnabled()){
+            if (!match.isMcmmoSkills()){
                 mcMMO.enableSkillAfterMatch(player);
             }
         }
@@ -257,7 +257,7 @@ public class DuelManager implements Loadable {
 
         if (mcMMO != null) {
             mcMMO.enableSkills(player);
-            if (!match.isSkillEnabled()){
+            if (!match.isMcmmoSkills()){
                 mcMMO.enableSkillAfterMatch(player);
             }
         }
@@ -366,7 +366,7 @@ public class DuelManager implements Loadable {
             vault.remove(bet, first, second);
         }
 
-        final MatchImpl match = arena.startMatch(kit, items, settings.getBet(), settings.isSkillsEnabled(), source);
+        final MatchImpl match = arena.startMatch(kit, items, settings.getBet(), settings.isMcmmoSkills(), source);
         addPlayers(match, arena, kit, arena.getPositions(), first, second);
 
         if (config.isCdEnabled()) {
@@ -458,7 +458,7 @@ public class DuelManager implements Loadable {
 
             if (mcMMO != null) {
                 mcMMO.disableSkills(player);
-                if (!match.isSkillEnabled()) {
+                if (!match.isMcmmoSkills()) {
                     mcMMO.disableSkillBedforeMatch(player);
                 }
             }
@@ -551,7 +551,7 @@ public class DuelManager implements Loadable {
                 return;
             }
 
-            if (mcMMO != null && !arena.getMatch().isSkillEnabled()) {
+            if (mcMMO != null && !arena.getMatch().isMcmmoSkills()) {
                 mcMMO.enableSkillAfterMatch(player);
             }
 
@@ -618,7 +618,7 @@ public class DuelManager implements Loadable {
                                     .replace("%winner%", winner.getName()).replace("%loser%", player.getName())
                                     .replace("%kit%", kitName).replace("%arena%", arena.getName())
                                     .replace("%bet_amount%", String.valueOf(match.getBet())
-                                    .replace("%mcmmo_skills%", match.isSkillEnabled() ? lang.getMessage("GENERAL.enabled") : lang.getMessage("GENERAL.disabled")))
+                                    .replace("%mcmmo_skills%", match.isMcmmoSkills() ? lang.getMessage("GENERAL.enabled") : lang.getMessage("GENERAL.disabled")))
                                 );
                             }
                         } catch (Exception ex) {

@@ -45,8 +45,8 @@ public class RequestImpl implements Request {
     }
 
     @Override
-    public boolean isSkillsEnabled() {
-        return settings.isSkillsEnabled();
+    public boolean mcmmoSkills() {
+        return settings.isMcmmoSkills();
     }
 
     @Override

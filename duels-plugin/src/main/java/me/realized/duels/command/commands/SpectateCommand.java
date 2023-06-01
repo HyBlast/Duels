@@ -68,7 +68,7 @@ public class SpectateCommand extends BaseCommand {
 
                 final MatchImpl match = arena.getMatch();
                 final String kit = match.getKit() != null ? match.getKit().getName() : lang.getMessage("GENERAL.none");
-                final String mcmmoSkills = match.isSkillEnabled() ? lang.getMessage("GENERAL.enabled") : lang.getMessage("GENERAL.disabled");
+                final String mcmmoSkills = match.isMcmmoSkills() ? lang.getMessage("GENERAL.enabled") : lang.getMessage("GENERAL.disabled");
                 lang.sendMessage(player, "COMMAND.spectate.start-spectate",
                         "name", target.getName(),
                         "opponent", arena.getOpponent(target).getName(),

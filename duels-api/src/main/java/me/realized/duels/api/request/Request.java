@@ -59,7 +59,7 @@ public interface Request {
      *
      * @return True if mcmmo skills are enabled for this {@link  Request}. False otherwise.
      */
-    boolean isSkillsEnabled();
+    boolean mcmmoSkills();
 
     /**
      * The bet for this {@link Request}.
