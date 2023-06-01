@@ -1,6 +1,10 @@
 package me.realized.duels.command.commands.duel;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+
+import com.google.common.collect.Iterables;
 import me.realized.duels.DuelsPlugin;
 import me.realized.duels.Permissions;
 import me.realized.duels.command.BaseCommand;
@@ -24,11 +28,9 @@ import me.realized.duels.util.StringUtil;
 import me.realized.duels.util.inventory.InventoryUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
-import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.PlayerInventory;
 
 public class DuelCommand extends BaseCommand {
 
@@ -268,6 +270,31 @@ public class DuelCommand extends BaseCommand {
     // Disables default TabCompleter
     @Override
     public List<String> onTabComplete(final CommandSender sender, final Command command, final String alias, final String[] args) {
-        return null;
+        final List<String> completions = new ArrayList<>();
+        Iterable<String> players = Bukkit.getOnlinePlayers().stream().map(Player::getName).toList();
+
+        if (args.length == 1) {
+            Iterable<String> stringIterable = new ArrayList<>(List.of("aceitar", "negar", "stats", "alternar", "top"));
+            stringIterable = Iterables.concat(stringIterable, players);
+            org.bukkit.util.StringUtil.copyPartialMatches(args[0], stringIterable, completions);
+            return completions;
+        }
+
+        if (args.length == 3) {
+            if (args[1].equalsIgnoreCase("stats")) {
+                org.bukkit.util.StringUtil.copyPartialMatches(args[0], players, completions);
+                return completions;
+            } else if (args[1].equalsIgnoreCase("top")) {
+                final Iterable<String> top = List.of("geral", "kit", "vitorias", "derrotas");
+                org.bukkit.util.StringUtil.copyPartialMatches(args[0], top, completions);
+                return completions;
+            } else {
+                final Iterable<String> amount = List.of("1000", "2000", "3000", "4000", "5000", "6000", "7000", "8000", "9000", "10000");
+                org.bukkit.util.StringUtil.copyPartialMatches(args[0], amount, completions);
+                return completions;
+            }
+        } else {
+            return Collections.emptyList();
+        }
     }
 }

@@ -23,7 +23,7 @@ public class AcceptCommand extends BaseCommand {
     private final WorldGuardHook worldGuard;
 
     public AcceptCommand(final DuelsPlugin plugin) {
-        super(plugin, "accept", "accept [player]", "Accepts a duel request.", 2, true);
+        super(plugin, "aceitar", "accept [player]", "Accepts a duel request.", 2, true, "accept");
         this.combatTagPlus = hookManager.getHook(CombatTagPlusHook.class);
         this.pvpManager = hookManager.getHook(PvPManagerHook.class);
         this.combatLogX = plugin.getHookManager().getHook(CombatLogXHook.class);
@@ -106,10 +106,11 @@ public class AcceptCommand extends BaseCommand {
         final String arena = settings.getArena() != null ? settings.getArena().getName() : lang.getMessage("GENERAL.random");
         final double bet = settings.getBet();
         final String itemBetting = settings.isItemBetting() ? lang.getMessage("GENERAL.enabled") : lang.getMessage("GENERAL.disabled");
+        final String mcmmoSkill = settings.isSkillsEnabled() ? lang.getMessage("GENERAL.enabled") : lang.getMessage("GENERAL.disabled");
         lang.sendMessage(player, "COMMAND.duel.request.accept.receiver",
-            "name", target.getName(), "kit", kit, "arena", arena, "bet_amount", bet, "item_betting", itemBetting);
+            "name", target.getName(), "kit", kit, "arena", arena, "bet_amount", bet, "item_betting", itemBetting, "mcmmo_skill", mcmmoSkill);
         lang.sendMessage(target, "COMMAND.duel.request.accept.sender",
-            "name", player.getName(), "kit", kit, "arena", arena, "bet_amount", bet, "item_betting", itemBetting);
+            "name", player.getName(), "kit", kit, "arena", arena, "bet_amount", bet, "item_betting", itemBetting, "mcmmo_skill", mcmmoSkill);
 
         if (settings.isItemBetting()) {
             settings.setBaseLoc(player);
