@@ -72,7 +72,6 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.FireworkMeta;
 
 public class DuelManager implements Loadable {
@@ -201,6 +200,9 @@ public class DuelManager implements Loadable {
 
         if (mcMMO != null) {
             mcMMO.enableSkills(player);
+            if (!match.isSkillEnabled()){
+                mcMMO.enableSkillAfterMatch(player);
+            }
         }
 
         final PlayerInfo info = playerManager.get(player);
@@ -255,6 +257,9 @@ public class DuelManager implements Loadable {
 
         if (mcMMO != null) {
             mcMMO.enableSkills(player);
+            if (!match.isSkillEnabled()){
+                mcMMO.enableSkillAfterMatch(player);
+            }
         }
 
         if (opponent != null) {
@@ -361,7 +366,7 @@ public class DuelManager implements Loadable {
             vault.remove(bet, first, second);
         }
 
-        final MatchImpl match = arena.startMatch(kit, items, settings.getBet(), source);
+        final MatchImpl match = arena.startMatch(kit, items, settings.getBet(), settings.isSkillsEnabled(), source);
         addPlayers(match, arena, kit, arena.getPositions(), first, second);
 
         if (config.isCdEnabled()) {
@@ -453,6 +458,9 @@ public class DuelManager implements Loadable {
 
             if (mcMMO != null) {
                 mcMMO.disableSkills(player);
+                if (!match.isSkillEnabled()) {
+                    mcMMO.disableSkillBedforeMatch(player);
+                }
             }
 
             arena.add(player);
@@ -543,6 +551,10 @@ public class DuelManager implements Loadable {
                 return;
             }
 
+            if (mcMMO != null && !arena.getMatch().isSkillEnabled()) {
+                mcMMO.enableSkillAfterMatch(player);
+            }
+
             final Inventory top = player.getOpenInventory().getTopInventory();
 
             if (top.getType() == InventoryType.CRAFTING) {
@@ -605,7 +617,8 @@ public class DuelManager implements Loadable {
                                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command
                                     .replace("%winner%", winner.getName()).replace("%loser%", player.getName())
                                     .replace("%kit%", kitName).replace("%arena%", arena.getName())
-                                    .replace("%bet_amount%", String.valueOf(match.getBet()))
+                                    .replace("%bet_amount%", String.valueOf(match.getBet())
+                                    .replace("%mcmmo_skill%", match.isSkillEnabled() ? lang.getMessage("GENERAL.enabled") : lang.getMessage("GENERAL.disabled")))
                                 );
                             }
                         } catch (Exception ex) {

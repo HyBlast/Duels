@@ -19,6 +19,7 @@ import me.realized.duels.api.event.arena.ArenaStateChangeEvent;
 import me.realized.duels.api.event.match.MatchEndEvent;
 import me.realized.duels.api.event.match.MatchEndEvent.Reason;
 import me.realized.duels.gui.BaseButton;
+import me.realized.duels.hook.hooks.McMMOHook;
 import me.realized.duels.kit.KitImpl;
 import me.realized.duels.queue.Queue;
 import me.realized.duels.setting.Settings;
@@ -150,8 +151,8 @@ public class ArenaImpl extends BaseButton implements Arena {
         return !isDisabled() && !isUsed() && getPosition(1) != null && getPosition(2) != null;
     }
 
-    public MatchImpl startMatch(final KitImpl kit, final Map<UUID, List<ItemStack>> items, final int bet, final Queue source) {
-        this.match = new MatchImpl(this, kit, items, bet, source);
+    public MatchImpl startMatch(final KitImpl kit, final Map<UUID, List<ItemStack>> items, final int bet, final boolean skillEnabled, final Queue source) {
+        this.match = new MatchImpl(this, kit, items, bet, skillEnabled, source);
         refreshGui(false);
         return match;
     }
