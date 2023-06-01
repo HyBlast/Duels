@@ -1,9 +1,5 @@
 package me.realized.duels.command.commands.duel;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import com.google.common.collect.Iterables;
 import me.realized.duels.DuelsPlugin;
 import me.realized.duels.Permissions;
@@ -32,6 +28,10 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class DuelCommand extends BaseCommand {
 
     private final CombatTagPlusHook combatTagPlus;
@@ -43,13 +43,13 @@ public class DuelCommand extends BaseCommand {
     public DuelCommand(final DuelsPlugin plugin) {
         super(plugin, "duel", Permissions.DUEL, true);
         child(
-            new AcceptCommand(plugin),
-            new DenyCommand(plugin),
-            new StatsCommand(plugin),
-            new ToggleCommand(plugin),
-            new TopCommand(plugin),
-            new InventoryCommand(plugin),
-            new VersionCommand(plugin)
+                new AcceptCommand(plugin),
+                new DenyCommand(plugin),
+                new StatsCommand(plugin),
+                new ToggleCommand(plugin),
+                new TopCommand(plugin),
+                new InventoryCommand(plugin),
+                new VersionCommand(plugin)
         );
         this.combatTagPlus = hookManager.getHook(CombatTagPlusHook.class);
         this.pvpManager = hookManager.getHook(PvPManagerHook.class);
@@ -97,8 +97,8 @@ public class DuelCommand extends BaseCommand {
         }
 
         if ((combatTagPlus != null && combatTagPlus.isTagged(player))
-            || (pvpManager != null && pvpManager.isTagged(player))
-            || (combatLogX != null && combatLogX.isTagged(player))) {
+                || (pvpManager != null && pvpManager.isTagged(player))
+                || (combatLogX != null && combatLogX.isTagged(player))) {
             lang.sendMessage(sender, "ERROR.duel.is-tagged");
             return true;
         }
@@ -162,6 +162,7 @@ public class DuelCommand extends BaseCommand {
         final Settings settings = settingManager.getSafely(player);
         // Reset bet to prevent accidents
         settings.setBet(0);
+        settings.setMcmmoSkills(true);
         settings.setTarget(target);
         settings.setBaseLoc(player);
         settings.setDuelzone(player, duelzone);
@@ -265,33 +266,46 @@ public class DuelCommand extends BaseCommand {
     }
 
     @Override
-    protected void execute(final CommandSender sender, final String label, final String[] args) {}
+    protected void execute(final CommandSender sender, final String label, final String[] args) {
+    }
 
     // Disables default TabCompleter
     @Override
     public List<String> onTabComplete(final CommandSender sender, final Command command, final String alias, final String[] args) {
-        final List<String> completions = new ArrayList<>();
-        Iterable<String> players = Bukkit.getOnlinePlayers().stream().map(Player::getName).toList();
+        if (sender instanceof Player player) {
 
-        if (args.length == 1) {
-            Iterable<String> stringIterable = new ArrayList<>(List.of("aceitar", "negar", "stats", "alternar", "top"));
-            stringIterable = Iterables.concat(stringIterable, players);
-            org.bukkit.util.StringUtil.copyPartialMatches(args[0], stringIterable, completions);
-            return completions;
-        }
+            List<String> completions = new ArrayList<>();
 
-        if (args.length == 3) {
-            if (args[1].equalsIgnoreCase("stats")) {
-                org.bukkit.util.StringUtil.copyPartialMatches(args[0], players, completions);
+            Iterable<String> players = Bukkit.getOnlinePlayers().stream()
+                    .filter(p -> p.canSee(player))
+                    .map(Player::getName)
+                    .filter(name -> !name.equals(sender.getName()))
+                    .toList();
+
+            if (args.length == 1) {
+                Iterable<String> stringIterable = new ArrayList<>(List.of("aceitar", "negar", "stats", "alternar", "top"));
+                stringIterable = Iterables.concat(stringIterable, players);
+                org.bukkit.util.StringUtil.copyPartialMatches(args[0], stringIterable, completions);
                 return completions;
-            } else if (args[1].equalsIgnoreCase("top")) {
-                final Iterable<String> top = List.of("geral", "kit", "vitorias", "derrotas");
-                org.bukkit.util.StringUtil.copyPartialMatches(args[0], top, completions);
-                return completions;
+            } else if (args.length == 2) {
+                switch (args[0]) {
+                    case "aceitar", "negar", "accept", "deny", "stats" -> {
+                        org.bukkit.util.StringUtil.copyPartialMatches(args[1], players, completions);
+                        return completions;
+                    }
+                    case "top" -> {
+                        final Iterable<String> top = List.of("geral", "kit", "vitorias", "derrotas");
+                        org.bukkit.util.StringUtil.copyPartialMatches(args[1], top, completions);
+                        return completions;
+                    }
+                    default -> {
+                        final Iterable<String> amount = List.of("10000", "20000", "30000", "40000", "50000", "60000", "70000", "80000", "90000", "99000");
+                        org.bukkit.util.StringUtil.copyPartialMatches(args[1], amount, completions);
+                        return completions;
+                    }
+                }
             } else {
-                final Iterable<String> amount = List.of("1000", "2000", "3000", "4000", "5000", "6000", "7000", "8000", "9000", "10000");
-                org.bukkit.util.StringUtil.copyPartialMatches(args[0], amount, completions);
-                return completions;
+                return Collections.emptyList();
             }
         } else {
             return Collections.emptyList();
