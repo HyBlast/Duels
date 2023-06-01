@@ -45,6 +45,11 @@ public class RequestImpl implements Request {
     }
 
     @Override
+    public boolean isSkillsEnabled() {
+        return settings.isSkillsEnabled();
+    }
+
+    @Override
     public int getBet() {
         return settings.getBet();
     }

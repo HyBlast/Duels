@@ -12,9 +12,11 @@ import org.bukkit.permissions.PermissionAttachment;
 public class McMMOHook extends PluginHook<DuelsPlugin> {
 
     public static final String NAME = "mcMMO";
+    private static final String PERMISSION = "mcmmo.skills.*";
 
     private final Config config;
     private final Map<UUID, PermissionAttachment> attachments = new HashMap<>();
+    private final Map<UUID, PermissionAttachment> attachments2 = new HashMap<>();
 
     public McMMOHook(final DuelsPlugin plugin) {
         super(plugin, NAME);
@@ -27,7 +29,7 @@ public class McMMOHook extends PluginHook<DuelsPlugin> {
         }
 
         final PermissionAttachment attachment = attachments.computeIfAbsent(player.getUniqueId(), result -> player.addAttachment(plugin));
-        attachment.setPermission("mcmmo.skills.*", false);
+        attachment.setPermission(PERMISSION, false);
         player.recalculatePermissions();
     }
 
@@ -43,5 +45,18 @@ public class McMMOHook extends PluginHook<DuelsPlugin> {
         }
 
         attachment.remove();
+    }
+
+    public void enableSkillAfterMatch(final Player player) {
+        final PermissionAttachment attachment = attachments2.remove(player.getUniqueId());
+        if (attachment != null) {
+            attachment.remove();
+        }
+    }
+
+    public void disableSkillBedforeMatch(final Player player) {
+        final PermissionAttachment attachment = attachments2.computeIfAbsent(player.getUniqueId(), result -> player.addAttachment(plugin));
+        attachment.setPermission(PERMISSION, false);
+        player.recalculatePermissions();
     }
 }

@@ -85,6 +85,8 @@ public class Config extends AbstractConfiguration<DuelsPlugin> {
     @Getter
     private boolean itemBettingEnabled;
     @Getter
+    private boolean mcmmoSkillEnabled;
+    @Getter
     private boolean itemBettingUsePermission;
     @Getter
     private boolean moneyBettingEnabled;
@@ -301,6 +303,7 @@ public class Config extends AbstractConfiguration<DuelsPlugin> {
         arenaSelectingEnabled = configuration.getBoolean("request.arena-selecting.enabled", true);
         arenaSelectingUsePermission = configuration.getBoolean("request.arena-selecting.use-permission", false);
         itemBettingEnabled = configuration.getBoolean("request.item-betting.enabled", true);
+        mcmmoSkillEnabled = configuration.getBoolean("request.mcmmo-skill.enabled", true);
         itemBettingUsePermission = configuration.getBoolean("request.item-betting.use-permission", false);
         moneyBettingEnabled = configuration.getBoolean("request.money-betting.enabled", true);
         moneyBettingMinAmount = configuration.getLong("request.money-betting.min-amount");
