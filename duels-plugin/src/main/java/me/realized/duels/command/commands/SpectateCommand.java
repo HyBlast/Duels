@@ -23,7 +23,7 @@ public class SpectateCommand extends BaseCommand {
         final Player player = (Player) sender;
         final SpectatorImpl spectator = spectateManager.get(player);
 
-        // If player is already spectating, using /spectate will put them out of spectator mode.
+        // If a player is already spectating, using /spectate will put them out of spectator mode.
         if (spectator != null) {
             spectateManager.stopSpectating(player);
             lang.sendMessage(player, "COMMAND.spectate.stop-spectate", "name", spectator.getTargetName());
@@ -56,7 +56,7 @@ public class SpectateCommand extends BaseCommand {
                     -> lang.sendMessage(player, "ERROR.duel.already-in-queue");
             case ALREADY_SPECTATING
                     -> lang.sendMessage(player, "ERROR.duel.already-in-match.sender");
-            case TARGET_NOT_IN_MATCH
+            case TARGET_NOT_IN_MATCH, EVENT_CANCELLED
                     -> lang.sendMessage(player, "ERROR.spectate.not-in-match", "name", target.getName());
             case SUCCESS -> {
                 final ArenaImpl arena = arenaManager.get(target);
@@ -68,15 +68,14 @@ public class SpectateCommand extends BaseCommand {
 
                 final MatchImpl match = arena.getMatch();
                 final String kit = match.getKit() != null ? match.getKit().getName() : lang.getMessage("GENERAL.none");
+                final String mcmmoSkills = match.isSkillEnabled() ? lang.getMessage("GENERAL.enabled") : lang.getMessage("GENERAL.disabled");
                 lang.sendMessage(player, "COMMAND.spectate.start-spectate",
                         "name", target.getName(),
                         "opponent", arena.getOpponent(target).getName(),
                         "kit", kit,
                         "arena", arena.getName(),
                         "bet_amount", match.getBet(),
-                        "mcmmo_skill", match.isSkillEnabled()
-                                ? lang.getMessage("GENERAL.enabled")
-                                : lang.getMessage("GENERAL.disabled")
+                        "mcmmo_skills", mcmmoSkills
                 );
             }
         }
