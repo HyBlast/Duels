@@ -121,6 +121,10 @@ request:
     # default: false
     use-permission: false
 
+  mcmmo-skill:
+    # If set to 'true', players will be able to choose to enable or disable mcMMO skill duel through the Request Settings GUI.
+    enabled: true
+
   kit-selecting:
     # If set to 'true', players will be able to choose a kit they wish to fight with through the Kit Selector GUI.
     # default: true

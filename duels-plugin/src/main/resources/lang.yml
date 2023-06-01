@@ -119,15 +119,17 @@ COMMAND:
         - '&6- &7Arena: &e%arena%'
         - '&6- &7Bet: &6$%bet_amount%'
         - '&6- &7Item Betting: &r%item_betting%'
+        - '&6- &7mcMMO Skills: &r%mcmmo_skills%'
         - '{LINE}'
         receiver:
         - '{LINE}'
         - '&7Duel request received from &f%name%&7.'
         - '&6- &7Kit: &3%kit%'
-        - '&7Own Inventory: &r%own_inventory%'
+        - '&6- &7Own Inventory: &r%own_inventory%'
         - '&6- &7Arena: &e%arena%'
         - '&6- &7Bet: &6$%bet_amount%'
         - '&6- &7Item Betting: &r%item_betting%'
+        - '&6- &7mcMMO Skills: &r%mcmmo_skills%'
         clickable-text:
           info:
             text: '&7Click to '
@@ -400,6 +402,12 @@ GUI:
         lore-no-permission:
         - '&cYou do not have permission to'
         - '&cuse this option.'
+      mcmmo-skill:
+        name: '&9Allow mcMMO Skills'
+        lore:
+          - '&7mcMMO Skills: &r%mcmmo_skills%'
+          - ' '
+          - '&aClick to Toggle mcMMO Skills!'
       send:
         name: '&a&lSEND REQUEST'
       cancel:
