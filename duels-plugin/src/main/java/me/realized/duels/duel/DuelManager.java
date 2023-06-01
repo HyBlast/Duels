@@ -618,7 +618,7 @@ public class DuelManager implements Loadable {
                                     .replace("%winner%", winner.getName()).replace("%loser%", player.getName())
                                     .replace("%kit%", kitName).replace("%arena%", arena.getName())
                                     .replace("%bet_amount%", String.valueOf(match.getBet())
-                                    .replace("%mcmmo_skill%", match.isSkillEnabled() ? lang.getMessage("GENERAL.enabled") : lang.getMessage("GENERAL.disabled")))
+                                    .replace("%mcmmo_skills%", match.isSkillEnabled() ? lang.getMessage("GENERAL.enabled") : lang.getMessage("GENERAL.disabled")))
                                 );
                             }
                         } catch (Exception ex) {
