@@ -1,17 +1,9 @@
 name: Build and Upload
 
-on:
-  push:
-    branches: [ '*' ]
-  pull_request:
-    branches: [ '*' ]
-
-permissions:
-  contents: read
+on: [push]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
