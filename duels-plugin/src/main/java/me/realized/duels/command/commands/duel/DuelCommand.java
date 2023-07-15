@@ -277,9 +277,9 @@ public class DuelCommand extends BaseCommand {
             List<String> completions = new ArrayList<>();
 
             Iterable<String> players = Bukkit.getOnlinePlayers().stream()
-                    .filter(p -> p.canSee(player))
+                    .filter(p -> !p.canSee(player))
+                    .filter(p -> p != player)
                     .map(Player::getName)
-                    .filter(name -> !name.equals(sender.getName()))
                     .toList();
 
             if (args.length == 1) {
