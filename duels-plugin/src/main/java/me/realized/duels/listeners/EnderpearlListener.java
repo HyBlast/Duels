@@ -38,14 +38,14 @@ public class EnderpearlListener implements Listener {
     }
 
     private void removeExpired(final Player player) {
-        final Collection<Pearl> pearls = this.pearls.asMap().get(player.getUniqueId());
+        final Collection<Pearl> pearlCollection = this.pearls.asMap().get(player.getUniqueId());
 
-        if (pearls == null || pearls.isEmpty()) {
+        if (pearlCollection == null || pearlCollection.isEmpty()) {
             return;
         }
 
         final long now = System.currentTimeMillis();
-        pearls.removeIf(pearl -> now - pearl.creation > PEARL_EXPIRY);
+        pearlCollection.removeIf(pearl -> now - pearl.creation > PEARL_EXPIRY);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -56,11 +56,9 @@ public class EnderpearlListener implements Listener {
 
         final EnderPearl enderPearl = (EnderPearl) event.getEntity();
 
-        if (!(enderPearl.getShooter() instanceof Player)) {
+        if (!(enderPearl.getShooter() instanceof Player player)) {
             return;
         }
-
-        final Player player = (Player) enderPearl.getShooter();
 
         // Ignore pearls thrown in match
         if (arenaManager.isInMatch(player)) {
@@ -73,23 +71,21 @@ public class EnderpearlListener implements Listener {
 
     @EventHandler
     public void on(final ProjectileHitEvent event) {
-        if (!(event.getEntity() instanceof EnderPearl)) {
+        if (!(event.getEntity() instanceof EnderPearl enderPearl)) {
             return;
         }
-
-        final EnderPearl enderPearl = (EnderPearl) event.getEntity();
 
         if (!(enderPearl.getShooter() instanceof Player)) {
             return;
         }
 
-        final Collection<Pearl> pearls = this.pearls.asMap().get(((Player) enderPearl.getShooter()).getUniqueId());
+        final Collection<Pearl> pearlCollection = this.pearls.asMap().get(((Player) enderPearl.getShooter()).getUniqueId());
 
-        if (pearls == null || pearls.isEmpty()) {
+        if (pearlCollection == null || pearlCollection.isEmpty()) {
             return;
         }
 
-        final Iterator<Pearl> iterator = pearls.iterator();
+        final Iterator<Pearl> iterator = pearlCollection.iterator();
 
         while (iterator.hasNext()) {
             final Pearl pearl = iterator.next();
@@ -104,13 +100,13 @@ public class EnderpearlListener implements Listener {
     @EventHandler
     public void on(final MatchStartEvent event) {
         for (final Player player : event.getPlayers()) {
-            final Collection<Pearl> pearls = this.pearls.asMap().remove(player.getUniqueId());
+            final Collection<Pearl> pearlCollection = this.pearls.asMap().remove(player.getUniqueId());
 
-            if (pearls == null || pearls.isEmpty()) {
+            if (pearlCollection == null || pearlCollection.isEmpty()) {
                 continue;
             }
 
-            pearls.forEach(pearl -> {
+            pearlCollection.forEach(pearl -> {
                 final EnderPearl enderPearl = pearl.pearl.get();
 
                 if (enderPearl != null && !enderPearl.isDead()) {
