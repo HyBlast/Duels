@@ -1,5 +1,10 @@
+plugins {
+    id 'java'
+}
+
 dependencies {
-    implementation ('com.sk89q.worldguard:worldguard-bukkit:7.0.0') {
+    compileOnly ('org.spigotmc:spigot-api:1.14.4-R0.1-SNAPSHOT')
+    compileOnly ('com.sk89q.worldguard:worldguard-bukkit:7.0.0') {
         exclude group: 'org.bukkit', module: 'bukkit'
     }
     implementation project(':duels-worldguard')

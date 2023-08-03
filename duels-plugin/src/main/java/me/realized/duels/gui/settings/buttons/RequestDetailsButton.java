@@ -32,6 +32,7 @@ public class RequestDetailsButton extends BaseButton {
             "own_inventory", settings.isOwnInventory() ? lang.getMessage("GENERAL.enabled") : lang.getMessage("GENERAL.disabled"),
             "arena", settings.getArena() != null ? settings.getArena().getName() : lang.getMessage("GENERAL.random"),
             "item_betting", settings.isItemBetting() ? lang.getMessage("GENERAL.enabled") : lang.getMessage("GENERAL.disabled"),
+            "mcmmo_skills", settings.isMcmmoSkills() ? lang.getMessage("GENERAL.enabled") : lang.getMessage("GENERAL.disabled"),
             "bet_amount", settings.getBet()
         );
         setLore(lore.split("\n"));

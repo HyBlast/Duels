@@ -98,6 +98,9 @@ request:
   # default: false
   requires-cleared-inventory: false
 
+  # Require not wearing an elytra when requesting to duel or starting a duel.
+  requires-no-wearing-elytra: false
+
   # If set to 'true', players in creative mode will be prohibited from dueling.
   # default: false
   prevent-creative-mode: false
@@ -117,6 +120,10 @@ request:
     # If set to 'true', players without the permission 'duels.use.own-inventory' will not be able to enable own inventory option.
     # default: false
     use-permission: false
+
+  mcmmo-skill:
+    # If set to 'true', players will be able to choose to enable or disable mcMMO skill duel through the Request Settings GUI.
+    enabled: true
 
   kit-selecting:
     # If set to 'true', players will be able to choose a kit they wish to fight with through the Kit Selector GUI.
@@ -149,6 +156,12 @@ request:
     # If set to 'true', players will be able to bet money on their duel by using the command '/duel [player] [bet amount]'.
     # default: true
     enabled: true
+
+    # Minimum amount a player can bet
+    min-amount: 10000
+
+    # Maximum amount a player can bet
+    max-amount: 1000000
 
     # If set to 'true', players without the permission 'duels.use.money-betting' will not be able to bet money on their duel.
     # default: false

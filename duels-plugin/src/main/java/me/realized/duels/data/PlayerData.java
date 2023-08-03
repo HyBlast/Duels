@@ -6,25 +6,24 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import me.realized.duels.player.PlayerInfo;
 import me.realized.duels.util.Log;
 import org.bukkit.inventory.ItemStack;
 
 public class PlayerData {
 
-    private static transient final String ITEM_LOAD_FAILURE = "Could not load item %s!";
+    private static final String ITEM_LOAD_FAILURE = "Could not load item %s!";
 
     public static PlayerData fromPlayerInfo(final PlayerInfo info) {
         return new PlayerData(info);
     }
 
-    private Map<String, Map<Integer, ItemData>> items = new HashMap<>();
-    private Collection<PotionEffectData> effects = new ArrayList<>();
+    private final Map<String, Map<Integer, ItemData>> items = new HashMap<>();
+    private final Collection<PotionEffectData> effects = new ArrayList<>();
     private double health;
     private int hunger;
     private LocationData location;
-    private List<ItemData> extra = new ArrayList<>();
+    private final List<ItemData> extra = new ArrayList<>();
 
     private PlayerData() {}
 
@@ -47,7 +46,10 @@ public class PlayerData {
 
     public PlayerInfo toPlayerInfo() {
         final PlayerInfo info = new PlayerInfo(
-            effects.stream().map(PotionEffectData::toPotionEffect).filter(Objects::nonNull).collect(Collectors.toList()),
+            effects.stream()
+                    .map(PotionEffectData::toPotionEffect)
+                    .filter(Objects::nonNull)
+                    .toList(),
             health,
             hunger,
             location.toLocation()
@@ -59,7 +61,7 @@ public class PlayerData {
                 final ItemStack item = itemData.toItemStack(false);
 
                 if (item == null) {
-                    Log.warn(String.format(ITEM_LOAD_FAILURE, itemData.toString()));
+                    Log.warn(String.format(ITEM_LOAD_FAILURE, itemData));
                     return;
                 }
 
@@ -68,7 +70,10 @@ public class PlayerData {
             info.getItems().put(entry.getKey(), data);
         }
 
-        info.getExtra().addAll(extra.stream().map(data -> data.toItemStack(false)).filter(Objects::nonNull).collect(Collectors.toList()));
+        info.getExtra().addAll(extra.stream()
+                .map(data -> data.toItemStack(false))
+                .filter(Objects::nonNull)
+                .toList());
         return info;
     }
 }

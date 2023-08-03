@@ -64,11 +64,12 @@ public class RequestManager implements Loadable, Listener {
         final String arena = settings.getArena() != null ? settings.getArena().getName() : lang.getMessage("GENERAL.random");
         final int betAmount = settings.getBet();
         final String itemBetting = settings.isItemBetting() ? lang.getMessage("GENERAL.enabled") : lang.getMessage("GENERAL.disabled");
+        final String mcmmoSkills = settings.isMcmmoSkills() ? lang.getMessage("GENERAL.enabled") : lang.getMessage("GENERAL.disabled");
 
         lang.sendMessage(sender, "COMMAND.duel.request.send.sender",
-            "name", target.getName(), "kit", kit, "own_inventory", ownInventory, "arena", arena, "bet_amount", betAmount, "item_betting", itemBetting);
+            "name", target.getName(), "kit", kit, "own_inventory", ownInventory, "arena", arena, "bet_amount", betAmount, "item_betting", itemBetting, "mcmmo_skills", mcmmoSkills);
         lang.sendMessage(target, "COMMAND.duel.request.send.receiver",
-            "name", sender.getName(), "kit", kit, "own_inventory", ownInventory, "arena", arena, "bet_amount", betAmount, "item_betting", itemBetting);
+            "name", sender.getName(), "kit", kit, "own_inventory", ownInventory, "arena", arena, "bet_amount", betAmount, "item_betting", itemBetting, "mcmmo_skills", mcmmoSkills);
 
         final String path = "COMMAND.duel.request.send.clickable-text.";
 

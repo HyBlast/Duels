@@ -30,6 +30,8 @@ public class MatchImpl implements Match {
     @Getter
     private final int bet;
     @Getter
+    private final boolean mcmmoSkills;
+    @Getter
     private final Queue source;
 
     @Getter
@@ -38,12 +40,13 @@ public class MatchImpl implements Match {
     // Default value for players is false, which is set to true if player is killed in the match.
     private final Map<Player, Boolean> players = new HashMap<>();
 
-    MatchImpl(final ArenaImpl arena, final KitImpl kit, final Map<UUID, List<ItemStack>> items, final int bet, final Queue source) {
+    MatchImpl(final ArenaImpl arena, final KitImpl kit, final Map<UUID, List<ItemStack>> items, final int bet, final boolean mcmmoSkills, final Queue source) {
         this.arena = arena;
         this.start = System.currentTimeMillis();
         this.kit = kit;
         this.items = items;
         this.bet = bet;
+        this.mcmmoSkills = mcmmoSkills;
         this.source = source;
     }
 
@@ -72,7 +75,7 @@ public class MatchImpl implements Match {
     }
     
     public List<ItemStack> getItems() {
-        return items != null ? items.values().stream().flatMap(Collection::stream).collect(Collectors.toList()) : Collections.emptyList();
+        return items != null ? items.values().stream().flatMap(Collection::stream).toList() : Collections.emptyList();
     }
 
     void setFinished() {

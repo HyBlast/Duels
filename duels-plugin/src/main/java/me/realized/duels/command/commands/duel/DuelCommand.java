@@ -1,6 +1,6 @@
 package me.realized.duels.command.commands.duel;
 
-import java.util.List;
+import com.google.common.collect.Iterables;
 import me.realized.duels.DuelsPlugin;
 import me.realized.duels.Permissions;
 import me.realized.duels.command.BaseCommand;
@@ -28,6 +28,10 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class DuelCommand extends BaseCommand {
 
     private final CombatTagPlusHook combatTagPlus;
@@ -37,15 +41,15 @@ public class DuelCommand extends BaseCommand {
     private final VaultHook vault;
 
     public DuelCommand(final DuelsPlugin plugin) {
-        super(plugin, "duel", Permissions.DUEL, true);
+        super(plugin, "duelo", Permissions.DUEL, true);
         child(
-            new AcceptCommand(plugin),
-            new DenyCommand(plugin),
-            new StatsCommand(plugin),
-            new ToggleCommand(plugin),
-            new TopCommand(plugin),
-            new InventoryCommand(plugin),
-            new VersionCommand(plugin)
+                new AcceptCommand(plugin),
+                new DenyCommand(plugin),
+                new StatsCommand(plugin),
+                new ToggleCommand(plugin),
+                new TopCommand(plugin),
+                new InventoryCommand(plugin),
+                new VersionCommand(plugin)
         );
         this.combatTagPlus = hookManager.getHook(CombatTagPlusHook.class);
         this.pvpManager = hookManager.getHook(PvPManagerHook.class);
@@ -77,6 +81,11 @@ public class DuelCommand extends BaseCommand {
             return true;
         }
 
+        if (config.isRequiresNoElytra() && InventoryUtil.wearingElytra(player)) {
+            lang.sendMessage(sender, "ERROR.duel.wearing-elytra");
+            return true;
+        }
+
         if (config.isPreventCreativeMode() && player.getGameMode() == GameMode.CREATIVE) {
             lang.sendMessage(sender, "ERROR.duel.in-creative-mode");
             return true;
@@ -88,8 +97,8 @@ public class DuelCommand extends BaseCommand {
         }
 
         if ((combatTagPlus != null && combatTagPlus.isTagged(player))
-            || (pvpManager != null && pvpManager.isTagged(player))
-            || (combatLogX != null && combatLogX.isTagged(player))) {
+                || (pvpManager != null && pvpManager.isTagged(player))
+                || (combatLogX != null && combatLogX.isTagged(player))) {
             lang.sendMessage(sender, "ERROR.duel.is-tagged");
             return true;
         }
@@ -153,6 +162,7 @@ public class DuelCommand extends BaseCommand {
         final Settings settings = settingManager.getSafely(player);
         // Reset bet to prevent accidents
         settings.setBet(0);
+        settings.setMcmmoSkills(true);
         settings.setTarget(target);
         settings.setBaseLoc(player);
         settings.setDuelzone(player, duelzone);
@@ -170,6 +180,11 @@ public class DuelCommand extends BaseCommand {
 
                 if (vault == null || vault.getEconomy() == null) {
                     lang.sendMessage(sender, "ERROR.setting.disabled-option", "option", lang.getMessage("GENERAL.betting"));
+                    return true;
+                }
+
+                if (amount < config.getMoneyBettingMinAmount() || amount > config.getMoneyBettingMaxAmount()) {
+                    lang.sendMessage(sender, "ERROR.command.insufficient-amount", "min", config.getMoneyBettingMinAmount(), "max", config.getMoneyBettingMaxAmount());
                     return true;
                 }
 
@@ -251,11 +266,49 @@ public class DuelCommand extends BaseCommand {
     }
 
     @Override
-    protected void execute(final CommandSender sender, final String label, final String[] args) {}
+    protected void execute(final CommandSender sender, final String label, final String[] args) {
+    }
 
     // Disables default TabCompleter
     @Override
     public List<String> onTabComplete(final CommandSender sender, final Command command, final String alias, final String[] args) {
-        return null;
+        if (sender instanceof Player player) {
+
+            List<String> completions = new ArrayList<>();
+
+            Iterable<String> players = Bukkit.getOnlinePlayers().stream()
+                    .filter(player::canSee)
+                    .filter(p -> p != player)
+                    .map(Player::getName)
+                    .toList();
+
+            if (args.length == 1) {
+                Iterable<String> stringIterable = new ArrayList<>(List.of("aceitar", "negar", "stats", "alternar", "top"));
+                stringIterable = Iterables.concat(stringIterable, players);
+                org.bukkit.util.StringUtil.copyPartialMatches(args[0], stringIterable, completions);
+                return completions;
+            } else if (args.length == 2) {
+                switch (args[0]) {
+                    case "aceitar", "negar", "accept", "deny", "stats" -> {
+                        org.bukkit.util.StringUtil.copyPartialMatches(args[1], players, completions);
+                        return completions;
+                    }
+                    case "top" -> {
+                        final Iterable<String> top = List.of("geral", "kit", "vitorias", "derrotas");
+                        org.bukkit.util.StringUtil.copyPartialMatches(args[1], top, completions);
+                        return completions;
+                    }
+                    default -> {
+                        final Iterable<String> amount = List.of("10000", "20000", "30000", "40000", "50000", "60000", "70000", "80000", "90000", "99000");
+                        org.bukkit.util.StringUtil.copyPartialMatches(args[1], amount, completions);
+                        return completions;
+                    }
+                }
+            } else {
+                return Collections.emptyList();
+            }
+        } else {
+            return Collections.emptyList();
+        }
     }
 }

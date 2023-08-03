@@ -28,11 +28,10 @@ public class DamageListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void on(final EntityDamageByEntityEvent event) {
-        if (!event.isCancelled() || !(event.getEntity() instanceof Player)) {
+        if (!event.isCancelled() || !(event.getEntity() instanceof Player player)) {
             return;
         }
 
-        final Player player = (Player) event.getEntity();
         final Player damager = EventUtil.getDamager(event);
 
         if (damager == null) {

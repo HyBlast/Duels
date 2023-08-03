@@ -428,14 +428,17 @@ public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
     }
 
     public Loadable find(final String name) {
-        return loadables.stream().filter(loadable -> loadable.getClass().getSimpleName().equalsIgnoreCase(name)).findFirst().orElse(null);
+        return loadables.stream()
+                .filter(loadable -> loadable.getClass().getSimpleName().equalsIgnoreCase(name))
+                .findFirst()
+                .orElse(null);
     }
 
     public List<String> getReloadables() {
         return loadables.stream()
-            .filter(loadable -> loadable instanceof Reloadable)
+            .filter(Reloadable.class::isInstance)
             .map(loadable -> loadable.getClass().getSimpleName())
-            .collect(Collectors.toList());
+            .toList();
     }
 
     @Override

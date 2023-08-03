@@ -33,6 +33,9 @@ public class Settings {
     @Getter
     private boolean ownInventory;
     @Getter
+    @Setter
+    private boolean mcmmoSkills;
+    @Getter
     private Map<UUID, CachedInfo> cache = new HashMap<>();
 
     public Settings(final DuelsPlugin plugin, final Player player) {
@@ -52,6 +55,7 @@ public class Settings {
         arena = null;
         bet = 0;
         itemBetting = false;
+        mcmmoSkills = true;
         ownInventory = !plugin.getConfiguration().isKitSelectingEnabled();
     }
 
@@ -123,6 +127,7 @@ public class Settings {
         copy.bet = bet;
         copy.itemBetting = itemBetting;
         copy.ownInventory = ownInventory;
+        copy.mcmmoSkills = mcmmoSkills;
         copy.cache = new HashMap<>(cache);
         return copy;
     }

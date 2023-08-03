@@ -1,15 +1,5 @@
 package me.realized.duels.duel;
 
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
 import me.realized.duels.DuelsPlugin;
 import me.realized.duels.api.event.match.MatchEndEvent.Reason;
 import me.realized.duels.api.event.match.MatchStartEvent;
@@ -74,9 +64,17 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 
-public class DuelManager implements Loadable {
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
-    private static final Calendar GREGORIAN_CALENDAR = new GregorianCalendar();
+public class DuelManager implements Loadable {
 
     private final DuelsPlugin plugin;
     private final Config config;
@@ -186,9 +184,9 @@ public class DuelManager implements Loadable {
      * Resets the player's inventory and balance in the case of a tie game.
      *
      * @param player Player to reset state
-     * @param arena Arena the match is taking place
-     * @param match Match the player is in
-     * @param alive Whether the player was alive in the match when the method was called.
+     * @param arena  Arena the match is taking place
+     * @param match  Match the player is in
+     * @param alive  Whether the player was alive in the match when the method was called.
      */
     private void handleTie(final Player player, final ArenaImpl arena, final MatchImpl match, boolean alive) {
         arena.remove(player);
@@ -196,10 +194,6 @@ public class DuelManager implements Loadable {
         // Reset player balance if there was a bet placed.
         if (vault != null && match.getBet() > 0) {
             vault.add(match.getBet(), player);
-        }
-
-        if (mcMMO != null) {
-            mcMMO.enableSkills(player);
         }
 
         final PlayerInfo info = playerManager.get(player);
@@ -230,10 +224,10 @@ public class DuelManager implements Loadable {
     /**
      * Rewards the duel winner with money and items bet on the match.
      *
-     * @param player Player determined to be the winner
+     * @param player   Player determined to be the winner
      * @param opponent Player that opposed the winner
-     * @param arena Arena the match is taking place
-     * @param match Match the player is in
+     * @param arena    Arena the match is taking place
+     * @param match    Match the player is in
      */
     private void handleWin(final Player player, final Player opponent, final ArenaImpl arena, final MatchImpl match) {
         arena.remove(player);
@@ -252,8 +246,12 @@ public class DuelManager implements Loadable {
             }
         }
 
-        if (mcMMO != null) {
+        if (mcMMO != null && !match.isMcmmoSkills()) {
             mcMMO.enableSkills(player);
+        }
+
+        if (opponent != null) {
+            teleport.tryTeleport(opponent, playerManager.getLobby());
         }
 
         final PlayerInfo info = playerManager.get(player);
@@ -318,6 +316,12 @@ public class DuelManager implements Loadable {
             return;
         }
 
+        if (config.isRequiresNoElytra() && InventoryUtil.wearingElytra(first) || InventoryUtil.wearingElytra(second)) {
+            lang.sendMessage(Arrays.asList(first, second), "DUEL.start-failure.wearing-elytra");
+            refundItems(items, first, second);
+            return;
+        }
+
         if (config.isPreventCreativeMode() && (first.getGameMode() == GameMode.CREATIVE || second.getGameMode() == GameMode.CREATIVE)) {
             lang.sendMessage(Arrays.asList(first, second), "DUEL.start-failure.in-creative-mode");
             refundItems(items, first, second);
@@ -350,7 +354,7 @@ public class DuelManager implements Loadable {
             vault.remove(bet, first, second);
         }
 
-        final MatchImpl match = arena.startMatch(kit, items, settings.getBet(), source);
+        final MatchImpl match = arena.startMatch(kit, items, settings.getBet(), settings.isMcmmoSkills(), source);
         addPlayers(match, arena, kit, arena.getPositions(), first, second);
 
         if (config.isCdEnabled()) {
@@ -376,8 +380,8 @@ public class DuelManager implements Loadable {
 
     private boolean isTagged(final Player player) {
         return (combatTagPlus != null && combatTagPlus.isTagged(player))
-            || (pvpManager != null && pvpManager.isTagged(player))
-            || (combatLogX != null && combatLogX.isTagged(player));
+                || (pvpManager != null && pvpManager.isTagged(player))
+                || (combatLogX != null && combatLogX.isTagged(player));
     }
 
     private boolean notInLoc(final Player player, final Location location) {
@@ -387,9 +391,9 @@ public class DuelManager implements Loadable {
 
         final Location source = player.getLocation();
         return !source.getWorld().equals(location.getWorld())
-            || source.getBlockX() != location.getBlockX()
-            || source.getBlockY() != location.getBlockY()
-            || source.getBlockZ() != location.getBlockZ();
+                || source.getBlockX() != location.getBlockX()
+                || source.getBlockY() != location.getBlockY()
+                || source.getBlockZ() != location.getBlockZ();
     }
 
     private boolean notInDz(final Player player, final String duelzone) {
@@ -440,7 +444,7 @@ public class DuelManager implements Loadable {
                 essentials.tryUnvanish(player);
             }
 
-            if (mcMMO != null) {
+            if (mcMMO != null && !match.isMcmmoSkills()) {
                 mcMMO.disableSkills(player);
             }
 
@@ -489,14 +493,14 @@ public class DuelManager implements Loadable {
             }
 
             final String message = lang.getMessage("DUEL.on-end.opponent-defeat",
-                "winner", winner.getName(),
-                "loser", loser.getName(),
-                "health", matchData.getHealth(),
-                "kit", matchData.getKit(),
-                "arena", match.getArena().getName(),
-                "winner_rating", winnerRating,
-                "loser_rating", loserRating,
-                "change", change
+                    "winner", winner.getName(),
+                    "loser", loser.getName(),
+                    "health", matchData.getHealth(),
+                    "kit", matchData.getKit(),
+                    "arena", match.getArena().getName(),
+                    "winner_rating", winnerRating,
+                    "loser_rating", loserRating,
+                    "change", change
             );
 
             if (message == null) {
@@ -522,14 +526,14 @@ public class DuelManager implements Loadable {
                 return;
             }
 
-            if (mcMMO != null) {
-                mcMMO.enableSkills(player);
-            }
-
             final MatchImpl match = arena.getMatch();
 
             if (match == null) {
                 return;
+            }
+
+            if (mcMMO != null && !arena.getMatch().isMcmmoSkills()) {
+                mcMMO.enableSkills(player);
             }
 
             final Inventory top = player.getOpenInventory().getTopInventory();
@@ -537,14 +541,14 @@ public class DuelManager implements Loadable {
             if (top.getType() == InventoryType.CRAFTING) {
                 top.clear();
             }
-            
-            if (!(match.isOwnInventory() && config.isOwnInventoryDropInventoryItems())) {    
+
+            if (!(match.isOwnInventory() && config.isOwnInventoryDropInventoryItems())) {
                 event.getDrops().clear();
                 event.setKeepLevel(true);
                 event.setDroppedExp(0);
                 event.setKeepInventory(false);
             }
-            
+
             inventoryManager.create(player, true);
             arena.remove(player);
 
@@ -567,6 +571,9 @@ public class DuelManager implements Loadable {
                 final Player winner = arena.first();
                 inventoryManager.create(winner, false);
 
+                PlayerUtil.reset(winner);
+                PlayerUtil.reset(player);
+
                 if (config.isSpawnFirework()) {
                     final Firework firework = (Firework) winner.getWorld().spawnEntity(winner.getEyeLocation(), EntityType.FIREWORK);
                     final FireworkMeta meta = firework.getFireworkMeta();
@@ -578,7 +585,7 @@ public class DuelManager implements Loadable {
                 final double health = Math.ceil(winner.getHealth()) * 0.5;
                 final String kitName = match.getKit() != null ? match.getKit().getName() : lang.getMessage("GENERAL.none");
                 final long duration = System.currentTimeMillis() - match.getStart();
-                final long time = GREGORIAN_CALENDAR.getTimeInMillis();
+                final long time = new GregorianCalendar().getTimeInMillis();
                 final MatchData matchData = new MatchData(winner.getName(), player.getName(), kitName, time, duration, health);
                 handleStats(match, userDataManager.get(winner), userDataManager.get(player), matchData);
                 plugin.doSyncAfter(() -> handleInventories(match), 1L);
@@ -589,9 +596,10 @@ public class DuelManager implements Loadable {
                         try {
                             for (final String command : config.getEndCommands()) {
                                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command
-                                    .replace("%winner%", winner.getName()).replace("%loser%", player.getName())
-                                    .replace("%kit%", kitName).replace("%arena%", arena.getName())
-                                    .replace("%bet_amount%", String.valueOf(match.getBet()))
+                                        .replace("%winner%", winner.getName()).replace("%loser%", player.getName())
+                                        .replace("%kit%", kitName).replace("%arena%", arena.getName())
+                                        .replace("%bet_amount%", String.valueOf(match.getBet())
+                                                .replace("%mcmmo_skills%", match.isMcmmoSkills() ? lang.getMessage("GENERAL.enabled") : lang.getMessage("GENERAL.disabled")))
                                 );
                             }
                         } catch (Exception ex) {
@@ -606,11 +614,10 @@ public class DuelManager implements Loadable {
 
         @EventHandler(ignoreCancelled = true)
         public void on(final EntityDamageEvent event) {
-            if (!(event.getEntity() instanceof Player)) {
+            if (!(event.getEntity() instanceof Player player)) {
                 return;
             }
 
-            final Player player = (Player) event.getEntity();
             final ArenaImpl arena = arenaManager.get(player);
 
             if (arena == null || !arena.isEndGame()) {
@@ -660,7 +667,7 @@ public class DuelManager implements Loadable {
             final String command = event.getMessage().substring(1).split(" ")[0].toLowerCase();
 
             if (!arenaManager.isInMatch(event.getPlayer())
-                || (config.isBlockAllCommands() ? config.getWhitelistedCommands().contains(command) : !config.getBlacklistedCommands().contains(command))) {
+                    || (config.isBlockAllCommands() ? config.getWhitelistedCommands().contains(command) : !config.getBlacklistedCommands().contains(command))) {
                 return;
             }
 
@@ -674,9 +681,9 @@ public class DuelManager implements Loadable {
             final Location to = event.getTo();
 
             if (!config.isLimitTeleportEnabled()
-                || event.getCause() == TeleportCause.ENDER_PEARL
-                || event.getCause() == TeleportCause.SPECTATE
-                || !arenaManager.isInMatch(player)) {
+                    || event.getCause() == TeleportCause.ENDER_PEARL
+                    || event.getCause() == TeleportCause.SPECTATE
+                    || !arenaManager.isInMatch(player)) {
                 return;
             }
 

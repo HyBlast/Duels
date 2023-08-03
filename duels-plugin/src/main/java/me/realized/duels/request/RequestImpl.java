@@ -45,6 +45,11 @@ public class RequestImpl implements Request {
     }
 
     @Override
+    public boolean mcmmoSkills() {
+        return settings.isMcmmoSkills();
+    }
+
+    @Override
     public int getBet() {
         return settings.getBet();
     }

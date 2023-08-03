@@ -48,6 +48,7 @@ ERROR:
   duel:
     is-self: '{PREFIX} &cYou cannot duel yourself.'
     inventory-not-empty: '{PREFIX} &cYou must have a cleared inventory to use this command.'
+    wearing-elytra: '{PREFIX} &cYou cannot start a duel while wearing an elytra.'
     in-creative-mode: '{PREFIX} &cYou cannot duel in creative mode.'
     in-blacklisted-world: '{PREFIX} &cYou cannot duel in this world.'
     is-tagged: '{PREFIX} &cYou cannot duel while combat tagged.'
@@ -92,6 +93,7 @@ ERROR:
     invalid-option: '{PREFIX} &c''%option%'' is not a valid option. Available options are: %available_options%'
     invalid-action: '{PREFIX} &c''%action%'' is not a valid action. Available actions are: %available_actions%'
     not-enough-money: '{PREFIX} &cYou do not have enough money to bet!'
+    insufficient-amount: '{PREFIX} &cInsufficient amount. Must be between $%min% and $%max%!'
     lobby-save-failure: '{PREFIX} &cCould not save lobby location. Please check the console for more information.'
     name-not-alphanumeric: '{PREFIX} &c''%name%'' is not alphanumeric.'
 
@@ -117,15 +119,17 @@ COMMAND:
         - '&6- &7Arena: &e%arena%'
         - '&6- &7Bet: &6$%bet_amount%'
         - '&6- &7Item Betting: &r%item_betting%'
+        - '&6- &7mcMMO Skills: &r%mcmmo_skills%'
         - '{LINE}'
         receiver:
         - '{LINE}'
         - '&7Duel request received from &f%name%&7.'
         - '&6- &7Kit: &3%kit%'
-        - '&7Own Inventory: &r%own_inventory%'
+        - '&6- &7Own Inventory: &r%own_inventory%'
         - '&6- &7Arena: &e%arena%'
         - '&6- &7Bet: &6$%bet_amount%'
         - '&6- &7Item Betting: &r%item_betting%'
+        - '&6- &7mcMMO Skills: &r%mcmmo_skills%'
         clickable-text:
           info:
             text: '&7Click to '
@@ -294,6 +298,7 @@ DUEL:
     is-tagged: '{FAIL_PREFIX} You or your opponent is in combat!'
     player-moved: '{FAIL_PREFIX} You or your opponent moved after sending/accepting the request!'
     not-in-duelzone: '{FAIL_PREFIX} You or your opponent moved out of the duelzone sending/accepting the request!'
+    wearing-elytra: '{FAIL_PREFIX} You or your opponent is wearing an elytra!'
     in-creative-mode: '{FAIL_PREFIX} You or your opponent is in creative mode!'
     no-arena-available: '{FAIL_PREFIX} No arenas are currently available. Please try again later.'
     arena-in-use: '{FAIL_PREFIX} That arena is already in use. Please select a different arena.'
@@ -397,6 +402,12 @@ GUI:
         lore-no-permission:
         - '&cYou do not have permission to'
         - '&cuse this option.'
+      mcmmo-skill:
+        name: '&9Allow mcMMO Skills'
+        lore:
+          - '&7mcMMO Skills: &r%mcmmo_skills%'
+          - ' '
+          - '&aClick to Toggle mcMMO Skills!'
       send:
         name: '&a&lSEND REQUEST'
       cancel:

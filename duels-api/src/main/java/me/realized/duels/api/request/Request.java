@@ -54,6 +54,12 @@ public interface Request {
      */
     boolean canBetItems();
 
+    /**
+     * Whether or not mcmmo skills are enabled for this {@link Request}.
+     *
+     * @return True if mcmmo skills are enabled for this {@link  Request}. False otherwise.
+     */
+    boolean mcmmoSkills();
 
     /**
      * The bet for this {@link Request}.

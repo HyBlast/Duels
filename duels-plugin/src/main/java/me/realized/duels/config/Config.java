@@ -65,6 +65,8 @@ public class Config extends AbstractConfiguration<DuelsPlugin> {
     @Getter
     private boolean requiresClearedInventory;
     @Getter
+    private boolean requiresNoElytra;
+    @Getter
     private boolean preventCreativeMode;
     @Getter
     private boolean ownInventoryEnabled;
@@ -83,9 +85,15 @@ public class Config extends AbstractConfiguration<DuelsPlugin> {
     @Getter
     private boolean itemBettingEnabled;
     @Getter
+    private boolean mcmmoSkillEnabled;
+    @Getter
     private boolean itemBettingUsePermission;
     @Getter
     private boolean moneyBettingEnabled;
+    @Getter
+    private long moneyBettingMinAmount;
+    @Getter
+    private long moneyBettingMaxAmount;
     @Getter
     private boolean moneyBettingUsePermission;
     @Getter
@@ -285,6 +293,7 @@ public class Config extends AbstractConfiguration<DuelsPlugin> {
         lhLossesTitle = configuration.getString("supported-plugins.LeaderHeads.losses.menu.title", "Duel Losses");
 
         requiresClearedInventory = configuration.getBoolean("request.requires-cleared-inventory", true);
+        requiresNoElytra = configuration.getBoolean("request.requires-no-wearing-elytra", false);
         preventCreativeMode = configuration.getBoolean("request.prevent-creative-mode", false);
         ownInventoryEnabled = configuration.getBoolean("request.use-own-inventory.enabled", true);
         ownInventoryDropInventoryItems = configuration.getBoolean("request.use-own-inventory.drop-inventory-items", false);
@@ -294,8 +303,11 @@ public class Config extends AbstractConfiguration<DuelsPlugin> {
         arenaSelectingEnabled = configuration.getBoolean("request.arena-selecting.enabled", true);
         arenaSelectingUsePermission = configuration.getBoolean("request.arena-selecting.use-permission", false);
         itemBettingEnabled = configuration.getBoolean("request.item-betting.enabled", true);
+        mcmmoSkillEnabled = configuration.getBoolean("request.mcmmo-skill.enabled", true);
         itemBettingUsePermission = configuration.getBoolean("request.item-betting.use-permission", false);
         moneyBettingEnabled = configuration.getBoolean("request.money-betting.enabled", true);
+        moneyBettingMinAmount = configuration.getLong("request.money-betting.min-amount");
+        moneyBettingMaxAmount = configuration.getLong("request.money-betting.max-amount");
         moneyBettingUsePermission = configuration.getBoolean("request.money-betting.use-permission", false);
         expiration = Math.max(configuration.getInt("request.expiration", 30), 0);
 
