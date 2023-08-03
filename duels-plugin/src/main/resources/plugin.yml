@@ -11,9 +11,9 @@ website: https://www.spigotmc.org/resources/duels.20171/
 description: An ultimate solution to server owners wanting to create a duel system.
 
 commands:
-   duel:
-     description: Send, accept, or deny a duel request.
-     aliases: [1v1, x1, duelar]
+   duelo:
+     description: Enviar, aceitar, ou recusar um pedido de Duelo.
+     aliases: [duelar]
    queue:
     description: Join or leave a queue.
     aliases: [q]
@@ -40,9 +40,9 @@ permissions:
       duels.queue: true
   duels.default:
     children:
-      duels.duel: true
+      duels.duelo: true
       duels.stats: true
       duels.toggle: true
       duels.top: true
-  duels.duel:
+  duels.duelo:
     default: true

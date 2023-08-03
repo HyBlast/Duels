@@ -13,7 +13,7 @@ import org.bukkit.command.CommandSender;
 public class TopCommand extends BaseCommand {
 
     public TopCommand(final DuelsPlugin plugin) {
-        super(plugin, "top", "top [geral:kit:vitorias:derrotas]", "Displays top wins, losses, or rating for kit.", Permissions.TOP, 2, true);
+        super(plugin, "top", "top [geral:kit:vitorias:derrotas]", "Exibe as vitórias, derrotas ou classificação do kit.", Permissions.TOP, 2, true);
     }
 
     @Override

@@ -41,7 +41,7 @@ public class DuelCommand extends BaseCommand {
     private final VaultHook vault;
 
     public DuelCommand(final DuelsPlugin plugin) {
-        super(plugin, "duel", Permissions.DUEL, true);
+        super(plugin, "duelo", Permissions.DUEL, true);
         child(
                 new AcceptCommand(plugin),
                 new DenyCommand(plugin),
